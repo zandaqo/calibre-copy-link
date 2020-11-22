@@ -14,7 +14,7 @@ class CopyLinkPlugin(InterfaceActionBase):
     description             = 'Easily copy Calibre link to a selected book'
     supported_platforms     = ['windows', 'osx', 'linux']
     author                  = 'Maga D. Zandaqo'
-    version                 = (1, 0, 0)
+    version                 = (1, 1, 0)
     minimum_calibre_version = (5, 0, 0)
     actual_plugin           = 'calibre_plugins.copy_link.ui:CopyLink'
         

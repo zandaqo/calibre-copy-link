@@ -8,7 +8,7 @@ from calibre.library import current_library_name
 
 class CopyLink(InterfaceAction):
     name = 'Copy Link'
-    action_spec = ('Copy Calibre link', None, 'Copy Calibre link to the book', None)
+    action_spec = ('Copy link', None, 'Copy Calibre link to the book', None)
     dont_add_to = frozenset(('context-menu-device',))
     action_type = 'current'
     
@@ -20,7 +20,8 @@ class CopyLink(InterfaceAction):
         if id:
             api = self.gui.current_db.new_api
             format = api.formats(id, verify_formats=False)[0]
-            link = f'calibre://view-book/{current_library_name()}/{str(id)}/{format}'
+            title = api.field_for('title', id)
+            link = f'[{title}](calibre://view-book/{current_library_name()}/{str(id)}/{format})'
             QApplication.clipboard().setText(link)
         
     def _get_selected_ids(self):
