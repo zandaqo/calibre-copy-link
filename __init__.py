@@ -9,14 +9,14 @@ __docformat__ = 'restructuredtext en'
 
 from calibre.customize import InterfaceActionBase
 
-class CopyLinkPlugin(InterfaceActionBase):
-    name                    = 'Copy Link'
-    description             = 'Easily copy Calibre link to a selected book'
+class LinksPlugin(InterfaceActionBase):
+    name                    = 'Links'
+    description             = 'Easily copy and attach links to a selected book'
     supported_platforms     = ['windows', 'osx', 'linux']
     author                  = 'Maga D. Zandaqo'
-    version                 = (1, 1, 0)
+    version                 = (1, 0, 0)
     minimum_calibre_version = (5, 0, 0)
-    actual_plugin           = 'calibre_plugins.copy_link.ui:CopyLink'
+    actual_plugin           = 'calibre_plugins.links.ui:Links'
         
     def is_customizable(self):
         return False

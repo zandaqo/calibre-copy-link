@@ -1,33 +1,38 @@
 #!/usr/bin/env python
 
-from PyQt5.Qt import QApplication
+from PyQt5.Qt import QApplication, QDesktopServices, QUrl
 from calibre.gui2 import error_dialog
 from calibre.ebooks.metadata.book.base import Metadata
 from calibre.gui2.actions import InterfaceAction
-from calibre.library import current_library_name
 
-class CopyLink(InterfaceAction):
-    name = 'Copy Link'
-    action_spec = ('Copy link', None, 'Copy Calibre link to the book', None)
+class Links(InterfaceAction):
+    name = 'Links'
+    action_spec = ('Links', None, None, None)
     dont_add_to = frozenset(('context-menu-device',))
     action_type = 'current'
+    action_add_menu = True
     
     def genesis(self):
-        self.qaction.triggered.connect(self.copy_link)        
-    
-    def copy_link(self):
-        id = self._get_selected_ids().pop()
-        if id:
-            api = self.gui.current_db.new_api
-            format = api.formats(id, verify_formats=False)[0]
-            title = api.field_for('title', id)
-            link = f'[{title}](calibre://view-book/{current_library_name()}/{str(id)}/{format})'
-            QApplication.clipboard().setText(link)
+        self.links_menu = self.qaction.menu()
+        self.create_menu_action(self.links_menu, 'copy_link', 'Copy Calibre link', shortcut='Ctrl+L', triggered=self.copy_link)
+        self.create_menu_action(self.links_menu, 'open_link', 'Open attached link', shortcut='Ctrl+O', triggered=self.open_link)
         
-    def _get_selected_ids(self):
-        rows = self.gui.library_view.selectionModel().selectedRows()
-        if not rows or len(rows) == 0:
-            d = error_dialog(self.gui, _('Cannot copy'), _('No books selected'))
-            d.exec_()
-            return set()
-        return set(map(self.gui.library_view.model().id, rows))
+    def copy_link(self):
+        api = self.gui.current_db.new_api
+        library_id = getattr(api, 'server_library_id', None)
+        if not library_id:
+            return
+        library_id = '_hex_-' + library_id.encode('utf-8').hex()
+        book_id = self.gui.library_view.current_id
+        format = api.formats(book_id, verify_formats=False)[0]
+        title = api.field_for('title', book_id)
+        link = f'[{title}](calibre://view-book/{library_id}/{book_id}/{format})'
+        QApplication.clipboard().setText(link)
+        
+    def open_link(self):
+        api = self.gui.current_db.new_api
+        book_id = self.gui.library_view.current_id
+        link = api.field_for('#attached_link', book_id)
+        if link:
+            url = QUrl(link)
+            QDesktopServices.openUrl(url)
