@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import re
 
 from PyQt5.Qt import QApplication, QDesktopServices, QUrl
 from calibre.gui2 import error_dialog
@@ -33,6 +34,10 @@ class Links(InterfaceAction):
         api = self.gui.current_db.new_api
         book_id = self.gui.library_view.current_id
         link = api.field_for('#attached_link', book_id)
-        if link:
-            url = QUrl(link)
-            QDesktopServices.openUrl(url)
+        if not link:
+            return
+        match = re.match(r'\[.*?\]\((?P<url>.*?)\)', link)
+        if match:
+            link = match.groupdict()['url']
+        url = QUrl(link)
+        QDesktopServices.openUrl(url)

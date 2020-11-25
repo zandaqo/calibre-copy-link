@@ -14,7 +14,7 @@ class LinksPlugin(InterfaceActionBase):
     description             = 'Easily copy and attach links to a selected book'
     supported_platforms     = ['windows', 'osx', 'linux']
     author                  = 'Maga D. Zandaqo'
-    version                 = (1, 0, 0)
+    version                 = (1, 1, 0)
     minimum_calibre_version = (5, 0, 0)
     actual_plugin           = 'calibre_plugins.links.ui:Links'
         
